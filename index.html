@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MI BOCADILLO</title>
     <link rel="stylesheet" href="login.css">
+    <script src="login.js"></script>
 </head>
 <body>
 
@@ -14,19 +15,16 @@
 <div class="login-box">
     <h2>INICIO DE SESIÓN</h2>
     <!-- Formulario de login -->
-    <form action="verificar_login.php" method="POST" id="login-form">
+    <form id="login-form">
         <!-- Campo de correo -->
-        <input type="email" class="input-field" name="email" placeholder="Correo electrónico" required>
+        <input type="email" class="input-field" name="email" id="email" placeholder="Correo electrónico" required>
         <!-- Campo de contraseña -->
-        <input type="password" class="input-field" name="password" placeholder="Contraseña" required>
+        <input type="password" class="input-field" name="password" id="password" placeholder="Contraseña" required>
         <!-- Botón de iniciar sesión -->
-        <button type="submit" class="btn">Iniciar sesión</button>
+        <input type="button" name="enviar" value="Enviar" class="btn" onclick="loginUser()"/>
     </form>
-    <!-- Mensaje de error si es necesario -->
-    <div class="error-message" id="error-message"></div>
 </div>
 
-<!-- Aquí puedes agregar un script de JavaScript para manejar la validación del lado del cliente si lo deseas -->
 
 </body>
 </html>
