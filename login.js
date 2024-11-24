@@ -31,8 +31,28 @@ function loginUser() {
 
         // Verifica si el login fue exitoso
         if (json.success) {
+            // Almacenar el auth_key en localStorage (o cookies) para su uso posterior
+            localStorage.setItem('auth_key', json.auth_key);
+            localStorage.setItem('tipo_usuario', json.tipo_usuario);
+
+            const tipoUsuario = localStorage.getItem('tipo_usuario');
+
+            if (json.tipo_usuario === 'alumnado' && json.nombre) {
+                localStorage.setItem('nombre_alumno', json.nombre);
+            }
+
+            if (tipoUsuario === "admin") {
+                window.location.href = "adminDashboard.html";
+            } else if (tipoUsuario === "alumnado") {
+                window.location.href = "pedirBocadillo.html";
+            } else if (tipoUsuario === "cocina") {
+                window.location.href = "cocinaDashboard.html";
+            } else {
+                alert("Tipo de usuario desconocido.");
+            }
+
             // Redirige a la página principal en caso de login exitoso
-            window.location.href = "pedirBocadillo.html";
+            //window.location.href = "pedirBocadillo.html";
         } else {
             // Mostrar mensaje de error
             alert(json.message);
@@ -42,4 +62,16 @@ function loginUser() {
         console.error("Error al realizar la solicitud:", error);
         alert("Hubo un error al procesar la solicitud.");
     });
+}
+
+function faltaPermisos(){
+    // Verificar si hay un mensaje de error en localStorage
+    const errorMessage = localStorage.getItem('error_message');
+    if (errorMessage) {
+        // Mostrar el mensaje de error
+        alert(errorMessage);
+
+        // Limpiar el mensaje de error después de mostrarlo
+        localStorage.removeItem('error_message');
+    }
 }

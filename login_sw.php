@@ -25,10 +25,39 @@ function login() {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             // Verificación de contraseña con password_verify() para mayor seguridad
             if (password_verify($password, $user['password'])) {
-                $_SESSION['user_email'] = $user['email'];
+
+                // Generar un auth_key aleatorio
+                $auth_key = bin2hex(random_bytes(16));
+
+                // Actualizar el auth_key en la base de datos para el usuario
+                $updateStmt = $db->prepare("UPDATE usuario SET auth_key = :auth_key WHERE email = :email");
+                $updateStmt->bindParam(':auth_key', $auth_key);
+                $updateStmt->bindParam(':email', $email);
+                $updateStmt->execute();
+
+                // Si el tipo_usuario es 'alumnado', obtener el nombre de la tabla 'alumno'
+                $nombre = null;
+                if ($user['tipo_usuario'] === 'alumnado') {
+                    $alumnoStmt = $db->prepare("SELECT nombre FROM alumno WHERE id_email_usuario = :id_email_usuario");
+                    $alumnoStmt->bindParam(':id_email_usuario', $user['email']);
+                    $alumnoStmt->execute();
+
+                    if ($alumnoStmt->rowCount() === 1) {
+                        $alumno = $alumnoStmt->fetch(PDO::FETCH_ASSOC);
+                        $nombre = $alumno['nombre'];
+                    }
+                }
+
+                // Establecer la clave en la sesión (opcional)
+                $_SESSION['auth_key'] = $auth_key;
+
+
                 echo json_encode([
                     'success' => true,
-                    'message' => "Login exitoso. Bienvenido"
+                    'message' => "Login exitoso. Bienvenido",
+                    'auth_key' => $auth_key,
+                    'tipo_usuario' => $user['tipo_usuario'],
+                    'nombre' => $nombre
                 ]);
             } else {
                 echo json_encode([
