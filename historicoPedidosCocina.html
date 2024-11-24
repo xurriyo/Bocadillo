@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>MiBOCADILLO</title>
-	<link rel="stylesheet" href="cocinaDashboard.css">
-	<script src="cocina.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Histórico de Pedidos - MiBOCADILLO</title>
+    <link rel="stylesheet" href="cocinaDashboard.css">
+    <script src="historicoPedidosCocina.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             verificarAcceso();
@@ -13,22 +13,22 @@
     </script>
 </head>
 <body>
-	<!-- Barra de navegación superior -->
+    <!-- Barra de navegación superior -->
     <header class="navbar">
         <img src="./medios/logoMiBocata.png" alt="Logo" class="logo">
         <nav class="nav-options">
-        	<a href="cocinaDashboard.html" class="nav-link">Pedidos del Día</a>
-        	<a href="historicoPedidosCocina.html" class="nav-link">Histórico de Pedidos</a>
+            <a href="cocinaDashboard.html" class="nav-link">Pedidos del Día</a>
+            <a href="historicoPedidos.html" class="nav-link">Histórico de Pedidos</a>
             <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
         </nav>
     </header>
 
     <!-- Contenedor principal -->
     <main>
-        <h1>Pedidos Pendientes</h1>
+        <h1>Histórico de Pedidos</h1>
         <!-- Contenedor de la tabla -->
         <div class="table-container">
-            <table id="pedidos-table">
+            <table id="historico-table">
                 <thead>
                     <tr>
                         <th>Alumno</th>

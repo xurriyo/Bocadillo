@@ -1,0 +1,112 @@
+.nav-options {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px 10px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-link:hover {
+    background-color: #fff;
+    color: #4CAF50;
+    border-radius: 4px;
+}
+
+/* Fondo del cuerpo */
+body {
+    background-image: url('./medios/paredblanca.png');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center center;
+    background-repeat: no-repeat;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Barra de navegación */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #4CAF50;
+    padding: 10px 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+}
+
+/* Logo de la barra */
+.navbar .logo {
+    width: 120px;
+    height: auto;
+}
+
+/* Botones de la barra */
+.logout-btn {
+    background-color: #fff;
+    color: #4CAF50;
+    border: 2px solid #4CAF50;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+/* Contenido principal */
+main {
+    margin-top: 80px;
+    padding: 20px;
+    text-align: center;
+}
+
+main h1 {
+    font-size: 28px;
+    color: #333;
+}
+
+.table-container {
+    margin: 20px auto;
+    width: 90%;
+    max-width: 1200px;
+    overflow-x: auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table thead {
+    background-color: #4CAF50;
+    color: white;
+}
+
+table th, table td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+table tbody tr:hover {
+    background-color: #f9f9f9;
+}
