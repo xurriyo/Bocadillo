@@ -13,7 +13,8 @@ try {
             p.fecha_recogida 
         FROM pedidos p
         JOIN alumno a ON p.id_alumno_bocadillo = a.nombre
-        JOIN bocadillo b ON p.id_bocadillo_pedido = b.nombre_bocadillo";
+        JOIN bocadillo b ON p.id_bocadillo_pedido = b.nombre_bocadillo
+        ORDER BY p.fecha DESC";
     $stmt = $db->query($query);
     $pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

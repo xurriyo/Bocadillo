@@ -19,6 +19,26 @@
     border-radius: 4px;
 }
 
+.bocadillos-resumen {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.resumen-item {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+
 /* Fondo del cuerpo */
 body {
     background-image: url('./medios/paredblanca.png');

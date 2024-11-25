@@ -17,7 +17,7 @@ try {
     }
 
     // Obtener la hora actual
-    $horaActual = new DateTime('now', new DateTimeZone('Europe/Madrid')); // Ajusta la zona horaria si es necesario
+    $horaActual = new DateTime('now', new DateTimeZone('Europe/Madrid'));
     $horaInicio = new DateTime('09:00', new DateTimeZone('Europe/Madrid'));
     $horaFin = new DateTime('11:00', new DateTimeZone('Europe/Madrid'));
 

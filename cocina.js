@@ -32,6 +32,10 @@ function fetchPedidos() {
         .then((response) => response.json())
         .then((data) => {
             if (data.success) {
+                // Mostrar resumen de bocadillos
+                generarResumenBocadillos(data.pedidos);
+
+                // Llenar la tabla de pedidos
                 populateTable(data.pedidos);
             } else {
                 alert("Error al cargar pedidos: " + data.message);
@@ -41,6 +45,30 @@ function fetchPedidos() {
             console.error("Error al cargar pedidos:", error);
             alert("Hubo un error al cargar los pedidos.");
         });
+}
+
+// Función para generar el resumen de bocadillos
+function generarResumenBocadillos(pedidos) {
+    const resumenContainer = document.getElementById("bocadillos-resumen");
+    resumenContainer.innerHTML = ""; // Limpiar el resumen anterior
+
+    // Crear un mapa para contar bocadillos
+    const resumen = {};
+    pedidos.forEach((pedido) => {
+        if (resumen[pedido.bocadillo]) {
+            resumen[pedido.bocadillo]++;
+        } else {
+            resumen[pedido.bocadillo] = 1;
+        }
+    });
+
+    // Crear elementos dinámicos para mostrar el resumen
+    for (const [bocadillo, cantidad] of Object.entries(resumen)) {
+        const resumenItem = document.createElement("div");
+        resumenItem.classList.add("resumen-item");
+        resumenItem.textContent = `${bocadillo}: ${cantidad} pedidos`;
+        resumenContainer.appendChild(resumenItem);
+    }
 }
 
 function populateTable(pedidos) {
