@@ -3,7 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>PEDIR</title>
+	<title>Pedir Bocadillo</title>
+    <link rel="stylesheet" href="pedirBocadillo.css">
 	<script src="alumnado.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -12,6 +13,23 @@
     </script>
 </head>
 <body>
-	<h1>HOLA ALUMNO</h1>
+	<!-- Barra de navegación superior -->
+    <header class="navbar">
+        <img src="./medios/logoMiBocata.png" alt="Logo" class="logo">
+        <nav class="nav-options">
+        	<a href="pedirBocadillo.html" class="nav-link">PedirBocadillo</a>
+        	<a href="historicoPedidosAlumno.html" class="nav-link">Histórico de Pedidos</a>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+        </nav>
+    </header>
+
+    <!-- Contenedor principal -->
+    <main>
+        <h1>Selecciona tu Bocadillo</h1>
+        <!-- Contenedor de opciones -->
+        <div class="bocadillos-container" id="bocadillos-container">
+            <!-- Bocadillos dinámicos se insertarán aquí -->
+        </div>
+    </main>
 </body>
 </html>
