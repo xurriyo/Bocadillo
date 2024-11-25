@@ -36,7 +36,7 @@ function fetchPedidos() {
                 generarResumenBocadillos(data.pedidos);
 
                 // Llenar la tabla de pedidos
-                populateTable(data.pedidos);
+                rellenarTabla(data.pedidos);
             } else {
                 alert("Error al cargar pedidos: " + data.message);
             }
@@ -71,7 +71,7 @@ function generarResumenBocadillos(pedidos) {
     }
 }
 
-function populateTable(pedidos) {
+function rellenarTabla(pedidos) {
     const tableBody = document.querySelector("#pedidos-table tbody");
     tableBody.innerHTML = ""; // Limpia las filas anteriores
 

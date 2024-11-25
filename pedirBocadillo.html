@@ -9,16 +9,20 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             verificarAcceso();
+            mostrarSaldo();
         });
     </script>
 </head>
 <body>
 	<!-- Barra de navegación superior -->
     <header class="navbar">
-        <img src="./medios/logoMiBocata.png" alt="Logo" class="logo">
+        <div class="logo-container">
+            <img src="./medios/logoMiBocata.png" alt="Logo" class="logo">
+            <span id="saldo-alumno" class="saldo">Saldo: -- €</span>
+        </div>
         <nav class="nav-options">
-        	<a href="pedirBocadillo.html" class="nav-link">PedirBocadillo</a>
-        	<a href="historicoPedidosAlumno.html" class="nav-link">Histórico de Pedidos</a>
+            <a href="pedirBocadillo.html" class="nav-link">PedirBocadillo</a>
+            <a href="historicoPedidosAlumno.html" class="nav-link">Histórico de Pedidos</a>
             <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
         </nav>
     </header>

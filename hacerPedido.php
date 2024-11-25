@@ -21,7 +21,6 @@ try {
     $horaInicio = new DateTime('09:00', new DateTimeZone('Europe/Madrid'));
     $horaFin = new DateTime('11:00', new DateTimeZone('Europe/Madrid'));
 
-    // Verificar si la hora actual está fuera del rango permitido
     if ($horaActual < $horaInicio || $horaActual > $horaFin) {
         echo json_encode([
             'success' => false,
@@ -32,46 +31,100 @@ try {
 
     $db = DB::getInstance();
 
+    // Verificar el saldo del alumno
+    $querySaldo = "SELECT monedero FROM alumno WHERE nombre = :alumno";
+    $stmtSaldo = $db->prepare($querySaldo);
+    $stmtSaldo->bindParam(':alumno', $alumno);
+    $stmtSaldo->execute();
+    $saldo = $stmtSaldo->fetchColumn();
+
+    if ($saldo === false) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Alumno no encontrado.',
+        ]);
+        exit;
+    }
+
+    // Obtener el precio del bocadillo nuevo
+    $queryPrecioNuevo = "SELECT precio_venta_publico FROM bocadillo WHERE nombre_bocadillo = :bocadillo";
+    $stmtPrecioNuevo = $db->prepare($queryPrecioNuevo);
+    $stmtPrecioNuevo->bindParam(':bocadillo', $bocadillo);
+    $stmtPrecioNuevo->execute();
+    $precioNuevo = $stmtPrecioNuevo->fetchColumn();
+
+    if ($precioNuevo === false) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Bocadillo no encontrado.',
+        ]);
+        exit;
+    }
+
     // Verificar si el alumno ya tiene un pedido para hoy
     $queryCheck = "SELECT id_bocadillo_pedido FROM pedidos WHERE id_alumno_bocadillo = :alumno AND fecha = date(now())";
     $stmtCheck = $db->prepare($queryCheck);
     $stmtCheck->bindParam(':alumno', $alumno);
     $stmtCheck->execute();
+    $pedidoExistente = $stmtCheck->fetchColumn();
 
-    if ($stmtCheck->rowCount() > 0) {
-        // Realizar un UPDATE si ya existe un pedido
-        $queryUpdate = "
-            UPDATE pedidos 
-            SET id_bocadillo_pedido = :bocadillo, precio_pedido = (
-                SELECT precio_venta_publico FROM bocadillo WHERE nombre_bocadillo = :bocadillo
-            )
-            WHERE id_alumno_bocadillo = :alumno AND fecha = date(now())";
-        $stmtUpdate = $db->prepare($queryUpdate);
-        $stmtUpdate->bindParam(':alumno', $alumno);
-        $stmtUpdate->bindParam(':bocadillo', $bocadillo);
-        $stmtUpdate->execute();
+    if ($pedidoExistente) {
+        // Obtener el precio del bocadillo antiguo
+        $queryPrecioAntiguo = "SELECT precio_venta_publico FROM bocadillo WHERE nombre_bocadillo = :bocadillo";
+        $stmtPrecioAntiguo = $db->prepare($queryPrecioAntiguo);
+        $stmtPrecioAntiguo->bindParam(':bocadillo', $pedidoExistente);
+        $stmtPrecioAntiguo->execute();
+        $precioAntiguo = $stmtPrecioAntiguo->fetchColumn();
 
-        echo json_encode([
-            'success' => true,
-            'message' => 'Pedido actualizado con éxito.',
-        ]);
+        // Actualizar saldo (devolver precio antiguo y cobrar precio nuevo)
+        $nuevoSaldo = $saldo + $precioAntiguo - $precioNuevo;
     } else {
-        // Realizar un INSERT si no existe un pedido
-        $queryInsert = "
-            INSERT INTO pedidos (id_alumno_bocadillo, id_bocadillo_pedido, precio_pedido, fecha) 
-            VALUES (:alumno, :bocadillo, (
-                SELECT precio_venta_publico FROM bocadillo WHERE nombre_bocadillo = :bocadillo
-            ), date(now()))";
-        $stmtInsert = $db->prepare($queryInsert);
-        $stmtInsert->bindParam(':alumno', $alumno);
-        $stmtInsert->bindParam(':bocadillo', $bocadillo);
-        $stmtInsert->execute();
-
-        echo json_encode([
-            'success' => true,
-            'message' => 'Pedido registrado con éxito.',
-        ]);
+        // Cobrar precio nuevo
+        $nuevoSaldo = $saldo - $precioNuevo;
     }
+
+    if ($nuevoSaldo < 0) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Saldo insuficiente en el monedero.',
+        ]);
+        exit;
+    }
+
+    // Actualizar el saldo del alumno
+    $queryUpdateSaldo = "UPDATE alumno SET monedero = :nuevoSaldo WHERE nombre = :alumno";
+    $stmtUpdateSaldo = $db->prepare($queryUpdateSaldo);
+    $stmtUpdateSaldo->bindParam(':nuevoSaldo', $nuevoSaldo);
+    $stmtUpdateSaldo->bindParam(':alumno', $alumno);
+    $stmtUpdateSaldo->execute();
+
+    if ($pedidoExistente) {
+        // Actualizar el pedido existente
+        $queryUpdatePedido = "
+            UPDATE pedidos 
+            SET id_bocadillo_pedido = :bocadillo, precio_pedido = :precioNuevo
+            WHERE id_alumno_bocadillo = :alumno AND fecha = date(now())";
+        $stmtUpdatePedido = $db->prepare($queryUpdatePedido);
+        $stmtUpdatePedido->bindParam(':bocadillo', $bocadillo);
+        $stmtUpdatePedido->bindParam(':precioNuevo', $precioNuevo);
+        $stmtUpdatePedido->bindParam(':alumno', $alumno);
+        $stmtUpdatePedido->execute();
+    } else {
+        // Insertar un nuevo pedido
+        $queryInsertPedido = "
+            INSERT INTO pedidos (id_alumno_bocadillo, id_bocadillo_pedido, precio_pedido, fecha) 
+            VALUES (:alumno, :bocadillo, :precioNuevo, date(now()))";
+        $stmtInsertPedido = $db->prepare($queryInsertPedido);
+        $stmtInsertPedido->bindParam(':alumno', $alumno);
+        $stmtInsertPedido->bindParam(':bocadillo', $bocadillo);
+        $stmtInsertPedido->bindParam(':precioNuevo', $precioNuevo);
+        $stmtInsertPedido->execute();
+    }
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Pedido realizado y saldo actualizado con éxito.',
+    ]);
 } catch (Exception $e) {
     echo json_encode([
         'success' => false,

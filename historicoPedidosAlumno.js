@@ -31,6 +31,30 @@ document.addEventListener("DOMContentLoaded", function () {
     })
 });
 
+// Función para generar el resumen de bocadillos
+function generarResumenBocadillos(pedidos) {
+    const resumenContainer = document.getElementById("bocadillos-resumen");
+    resumenContainer.innerHTML = ""; // Limpiar el resumen anterior
+
+    // Crear un mapa para contar bocadillos
+    const resumen = {};
+    pedidos.forEach((pedido) => {
+        if (resumen[pedido.bocadillo]) {
+            resumen[pedido.bocadillo]++;
+        } else {
+            resumen[pedido.bocadillo] = 1;
+        }
+    });
+
+    // Crear elementos dinámicos para mostrar el resumen
+    for (const [bocadillo, cantidad] of Object.entries(resumen)) {
+        const resumenItem = document.createElement("div");
+        resumenItem.classList.add("resumen-item");
+        resumenItem.textContent = `${bocadillo}: ${cantidad} pedidos`;
+        resumenContainer.appendChild(resumenItem);
+    }
+}
+
 function fetchHistorico() {
     const nombreAlumno = localStorage.getItem("nombre_alumno");
 
@@ -49,7 +73,7 @@ function fetchHistorico() {
         .then((response) => response.json())
         .then((data) => {
             if (data.success) {
-                populateHistorico(data.pedidos); // Llenar la tabla con los pedidos
+                rellenarHistorico(data.pedidos);
             } else {
                 alert("Error al cargar el histórico: " + data.message);
             }
@@ -60,9 +84,9 @@ function fetchHistorico() {
         });
 }
 
-function populateHistorico(pedidos) {
+function rellenarHistorico(pedidos) {
     const tableBody = document.querySelector("#historico-table tbody");
-    tableBody.innerHTML = ""; // Limpia las filas anteriores
+    tableBody.innerHTML = "";
 
     pedidos.forEach((pedido) => {
         const row = document.createElement("tr");
@@ -116,7 +140,7 @@ function filtrarPorColumna(column) {
                 // Pedir al usuario el valor por el que filtrar
                 const filterValue = prompt(`Introduce un valor para filtrar por ${column}:`);
                 if (!filterValue) {
-                    populateHistorico(data.pedidos); // Mostrar todos los pedidos si no hay filtro
+                    rellenarHistorico(data.pedidos); // Mostrar todos los pedidos si no hay filtro
                     return;
                 }
 
@@ -127,7 +151,7 @@ function filtrarPorColumna(column) {
                 });
 
                 // Actualizar la tabla con los pedidos filtrados
-                populateHistorico(pedidosFiltrados);
+                rellenarHistorico(pedidosFiltrados);
 
                 if (pedidosFiltrados.length === 0) {
                     alert(`No se encontraron pedidos que coincidan con "${filterValue}".`);

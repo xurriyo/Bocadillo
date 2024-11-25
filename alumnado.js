@@ -24,6 +24,36 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchBocadillos();
 });
 
+function mostrarSaldo() {
+    const nombreAlumno = localStorage.getItem("nombre_alumno");
+
+    if (!nombreAlumno) {
+        console.error("No se pudo obtener el nombre del alumno.");
+        return;
+    }
+
+    fetch("getSaldoAlumno.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ alumno: nombreAlumno }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                const saldoAlumno = document.getElementById("saldo-alumno");
+                saldoAlumno.textContent = `Saldo: ${parseFloat(data.saldo).toFixed(2)} €`;
+            } else {
+                console.error("Error al obtener el saldo: " + data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("Error al obtener el saldo:", error);
+        });
+}
+
+
 // funcion para traer los bocadillos del backend
 function fetchBocadillos() {
     const nombreAlumno = localStorage.getItem("nombre_alumno");
@@ -46,7 +76,7 @@ function fetchBocadillos() {
         .then((response) => response.json())
         .then((data) => {
             if (data.success) {
-                displayBocadillos(data.bocadillos, data.pedido_actual);
+                imprimirBocadillos(data.bocadillos, data.pedido_actual);
             } else {
                 alert("Error al cargar bocadillos: " + data.message);
             }
@@ -57,7 +87,7 @@ function fetchBocadillos() {
         });
 }
 
-function displayBocadillos(bocadillos, pedidoActual) {
+function imprimirBocadillos(bocadillos, pedidoActual) {
     const container = document.querySelector("#bocadillos-container");
     container.innerHTML = "";
 
