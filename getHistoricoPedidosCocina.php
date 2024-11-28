@@ -7,7 +7,9 @@ try {
     $query = "
         SELECT 
             a.nombre AS alumno, 
+            a.id_curso_alumno AS curso,
             b.nombre_bocadillo AS bocadillo, 
+            b.tipo_bocadillo AS tipo,
             p.precio_pedido, 
             p.fecha, 
             p.fecha_recogida 

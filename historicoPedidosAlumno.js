@@ -94,6 +94,9 @@ function rellenarHistorico(pedidos) {
         const bocadilloCell = document.createElement("td");
         bocadilloCell.textContent = pedido.bocadillo;
 
+        const tipoCell = document.createElement("td");
+        tipoCell.textContent = pedido.tipo;
+
         const precioCell = document.createElement("td");
         const precio = parseFloat(pedido.precio_pedido);
         precioCell.textContent = isNaN(precio) ? "N/A" : `${precio.toFixed(2)}€`;
@@ -110,6 +113,7 @@ function rellenarHistorico(pedidos) {
 
         // Añade celdas a la fila
         row.appendChild(bocadilloCell);
+        row.appendChild(tipoCell);
         row.appendChild(precioCell);
         row.appendChild(fechaCell);
         row.appendChild(fechaRecogidaCell);

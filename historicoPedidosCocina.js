@@ -35,7 +35,7 @@ function fetchHistorico() {
         .then((response) => response.json())
         .then((data) => {
             if (data.success) {
-                populateHistorico(data.pedidos); // Llenar la tabla
+                rellenarHistorico(data.pedidos); // Llenar la tabla
             } else {
                 alert("Error al cargar el histórico: " + data.message);
             }
@@ -46,7 +46,7 @@ function fetchHistorico() {
         });
 }
 
-function populateHistorico(pedidos) {
+function rellenarHistorico(pedidos) {
     const tableBody = document.querySelector("#historico-table tbody");
     tableBody.innerHTML = ""; // Limpia las filas anteriores
 
@@ -57,8 +57,14 @@ function populateHistorico(pedidos) {
         const alumnoCell = document.createElement("td");
         alumnoCell.textContent = pedido.alumno;
 
+        const cursoCell = document.createElement("td");
+        cursoCell.textContent = pedido.curso;
+
         const bocadilloCell = document.createElement("td");
         bocadilloCell.textContent = pedido.bocadillo;
+
+        const tipoCell = document.createElement("td");
+        tipoCell.textContent = pedido.tipo;
 
         const precioCell = document.createElement("td");
         const precio = parseFloat(pedido.precio_pedido);
@@ -76,7 +82,9 @@ function populateHistorico(pedidos) {
 
         // Añade celdas a la fila
         row.appendChild(alumnoCell);
+        row.appendChild(cursoCell);
         row.appendChild(bocadilloCell);
+        row.appendChild(tipoCell);
         row.appendChild(precioCell);
         row.appendChild(fechaCell);
         row.appendChild(fechaRecogidaCell);
@@ -95,7 +103,7 @@ function filtrarPorColumna(column) {
                 // Pedir al usuario el valor por el que filtrar
                 const filterValue = prompt(`Introduce un valor para filtrar por ${column}:`);
                 if (!filterValue) {
-                    populateHistorico(data.pedidos); // Mostrar todos los pedidos si no hay filtro
+                    rellenarHistorico(data.pedidos); // Mostrar todos los pedidos si no hay filtro
                     return;
                 }
 
@@ -106,7 +114,7 @@ function filtrarPorColumna(column) {
                 });
 
                 // Actualizar la tabla con los pedidos filtrados
-                populateHistorico(pedidosFiltrados);
+                rellenarHistorico(pedidosFiltrados);
 
                 if (pedidosFiltrados.length === 0) {
                     alert(`No se encontraron pedidos que coincidan con "${filterValue}".`);

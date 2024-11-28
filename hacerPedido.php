@@ -24,7 +24,7 @@ try {
     if ($horaActual < $horaInicio || $horaActual > $horaFin) {
         echo json_encode([
             'success' => false,
-            'message' => 'Los pedidos solo pueden realizarse entre las 9:00 AM y las 11:00 AM.',
+            'message' => 'Los pedidos solo pueden realizarse entre las 9:00 y las 11:00.',
         ]);
         exit;
     }
