@@ -68,7 +68,7 @@ function rellenarHistorico(pedidos) {
 
         const precioCell = document.createElement("td");
         const precio = parseFloat(pedido.precio_pedido);
-        precioCell.textContent = isNaN(precio) ? "N/A" : `${precio.toFixed(2)}€`;
+        precioCell.textContent = `${precio.toFixed(2)}€`;
 
         const fechaCell = document.createElement("td");
         fechaCell.textContent = pedido.fecha
@@ -93,6 +93,7 @@ function rellenarHistorico(pedidos) {
         tableBody.appendChild(row);
     });
 }
+
 
 function filtrarPorColumna(column) {
     // Solicitar los datos actuales del servidor para aplicar filtros

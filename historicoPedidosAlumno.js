@@ -84,9 +84,12 @@ function fetchHistorico() {
         });
 }
 
+
 function rellenarHistorico(pedidos) {
     const tableBody = document.querySelector("#historico-table tbody");
     tableBody.innerHTML = "";
+
+    let totalGastado = 0; // Inicializar el total
 
     pedidos.forEach((pedido) => {
         const row = document.createElement("tr");
@@ -99,7 +102,8 @@ function rellenarHistorico(pedidos) {
 
         const precioCell = document.createElement("td");
         const precio = parseFloat(pedido.precio_pedido);
-        precioCell.textContent = isNaN(precio) ? "N/A" : `${precio.toFixed(2)}€`;
+        totalGastado += precio; // Sumar al total
+        precioCell.textContent = `${precio.toFixed(2)}€`;
 
         const fechaCell = document.createElement("td");
         fechaCell.textContent = pedido.fecha
@@ -121,7 +125,14 @@ function rellenarHistorico(pedidos) {
         // Añade fila a la tabla
         tableBody.appendChild(row);
     });
+
+    // Mostrar el total gastado en el contenedor correspondiente
+    const totalContainer = document.getElementById("total-gastado");
+    totalContainer.textContent = `${totalGastado.toFixed(2)}€`; // Mostrar con 2 decimales
 }
+
+
+
 
 function filtrarPorColumna(column) {
     const nombreAlumno = localStorage.getItem("nombre_alumno");
