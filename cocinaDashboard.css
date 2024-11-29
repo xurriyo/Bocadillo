@@ -52,6 +52,40 @@
     display: block; /* Mostrar el error cuando sea necesario */
 }
 
+.pagination-container {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.pagination-btn {
+    padding: 5px 15px;
+    margin: 0 10px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+
+.page-input {
+    width: 50px;
+    padding: 5px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+#prev-page-btn:disabled,
+#next-page-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#page-info {
+    margin-right: 10px;
+}
+
+
 .nav-options {
     display: flex;
     align-items: center;

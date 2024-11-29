@@ -66,6 +66,14 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Paginación -->
+        <div id="pagination-container" class="pagination-container">
+            <button id="prev-page-btn" class="pagination-btn" onclick="changePage('prev')">Anterior</button>
+            <span id="page-info">Página 1 de 1</span>
+            <button id="next-page-btn" class="pagination-btn" onclick="changePage('next')">Siguiente</button>
+            <input type="number" id="page-input" class="page-input" min="1" onchange="goToPage()">
+        </div>
     </main>
 </body>
 </html>

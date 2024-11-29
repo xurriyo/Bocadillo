@@ -48,6 +48,23 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("filter-value").value = "";
         fetchPedidos(); // Restablecer la tabla con los datos originales
     });
+
+    // Botones de paginación
+    const paginaPreviaBtn = document.getElementById("prev-page-btn");
+    const paginaSiguienteBtn = document.getElementById("next-page-btn");
+    const pageInput = document.getElementById("page-input");
+
+    paginaPreviaBtn.addEventListener("click", function () {
+        pasarPagina("prev");
+    });
+
+    paginaSiguienteBtn.addEventListener("click", function () {
+        pasarPagina("next");
+    });
+
+    pageInput.addEventListener("change", function () {
+        elegirPagina();
+    });
 });
 
 function fetchPedidos() {
@@ -56,11 +73,30 @@ function fetchPedidos() {
         .then((response) => response.json())
         .then((data) => {
             if (data.success) {
+                // Variables para la paginación
+                const itemsPerPage = 10;
+                let currentPage = 1;
+                const totalPages = Math.ceil(data.pedidos.length / itemsPerPage);
+
                 // Mostrar resumen de bocadillos
                 generarResumenBocadillos(data.pedidos);
 
-                // Llenar la tabla de pedidos
-                rellenarTabla(data.pedidos);
+                // Actualizar la tabla con la página actual
+                const paginatedData = paginarRegistros(data.pedidos, currentPage, itemsPerPage);
+                rellenarTabla(paginatedData, currentPage, totalPages);
+
+                // Actualizar la información de la página actual
+                const pageInfo = document.getElementById("page-info");
+                pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+                const pageInput = document.getElementById("page-input");
+                pageInput.value = currentPage;
+
+                // Deshabilitar botones de navegación según la página actual
+                const paginaPreviaBtn = document.getElementById("prev-page-btn");
+                const paginaSiguienteBtn = document.getElementById("next-page-btn");
+
+                paginaPreviaBtn.disabled = currentPage === 1;
+                paginaSiguienteBtn.disabled = currentPage === totalPages;
             } else {
                 mostrarError("Error al cargar pedidos: " + data.message);
             }
@@ -69,6 +105,13 @@ function fetchPedidos() {
             console.error("Error al cargar pedidos:", error);
             mostrarError("Hubo un error al cargar los pedidos.");
         });
+}
+
+// Función para paginar los datos
+function paginarRegistros(pedidos, currentPage, itemsPerPage) {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return pedidos.slice(startIndex, endIndex);
 }
 
 // Función para generar el resumen de bocadillos
@@ -95,14 +138,16 @@ function generarResumenBocadillos(pedidos) {
     }
 }
 
-function rellenarTabla(pedidos) {
+
+// Función para rellenar la tabla con los pedidos paginados
+function rellenarTabla(pedidos, currentPage, totalPages) {
     const tableBody = document.querySelector("#pedidos-table tbody");
-    tableBody.innerHTML = ""; // Limpia las filas anteriores
+    tableBody.innerHTML = ""; // Limpiar la tabla
 
     pedidos.forEach((pedido) => {
         const row = document.createElement("tr");
 
-        // Crea celdas dinámicas
+        // Crea las celdas para cada fila
         const alumnoCell = document.createElement("td");
         alumnoCell.textContent = pedido.alumno;
 
@@ -110,7 +155,6 @@ function rellenarTabla(pedidos) {
         bocadilloCell.textContent = pedido.bocadillo;
 
         const precioCell = document.createElement("td");
-        // Verificar si precio_pedido es válido y convertirlo a número
         const precio = parseFloat(pedido.precio_pedido);
         precioCell.textContent = isNaN(precio) ? "N/A" : `${precio.toFixed(2)}€`;
 
@@ -120,35 +164,116 @@ function rellenarTabla(pedidos) {
             : "Sin fecha";
 
         const fechaRecogidaCell = document.createElement("td");
-        // Crear un checkbox para fecha de recogida
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
-        
-        // Marcar el checkbox si fecha_recogida no es null
         if (pedido.fecha_recogida) {
             checkbox.checked = true;
-            checkbox.disabled = true; // Deshabilitar si ya está marcado
+            checkbox.disabled = true;
         }
 
-        // Agregar evento al checkbox
         checkbox.addEventListener("change", function () {
             if (this.checked) {
-                marcarFechaRecogida(pedido.alumno, pedido.fecha); // Llamar a la función para actualizar
+                marcarFechaRecogida(pedido.alumno, pedido.fecha);
             }
         });
 
         fechaRecogidaCell.appendChild(checkbox);
 
-        // Añade celdas a la fila
         row.appendChild(alumnoCell);
         row.appendChild(bocadilloCell);
         row.appendChild(precioCell);
         row.appendChild(fechaCell);
         row.appendChild(fechaRecogidaCell);
 
-        // Añade fila a la tabla
         tableBody.appendChild(row);
     });
+}
+
+// Función para cambiar de página
+function pasarPagina(direction) {
+    const currentPageInput = document.getElementById("page-input");
+    let currentPage = parseInt(currentPageInput.value, 10); // Obtener la página actual desde el input
+    const itemsPerPage = 10;
+
+    fetch("sw_cocina.php?action=getPedidos")
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                const totalPages = Math.ceil(data.pedidos.length / itemsPerPage); // Calcular el total de páginas
+
+                // Cambiar la página según la dirección (prev o next)
+                if (direction === "prev" && currentPage > 1) {
+                    currentPage -= 1; // Retroceder una página
+                } else if (direction === "next" && currentPage < totalPages) {
+                    currentPage += 1; // Avanzar una página
+                }
+
+                // Actualizar la tabla con los pedidos de la página actual
+                const paginatedData = paginarRegistros(data.pedidos, currentPage, itemsPerPage);
+                rellenarTabla(paginatedData, currentPage, totalPages);
+
+                // Actualizar la información de la página
+                const pageInfo = document.getElementById("page-info");
+                pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+                currentPageInput.value = currentPage;
+
+                // Deshabilitar botones de navegación según la página actual
+                const paginaPreviaBtn = document.getElementById("prev-page-btn");
+                const paginaSiguienteBtn = document.getElementById("next-page-btn");
+
+                paginaPreviaBtn.disabled = currentPage === 1;
+                paginaSiguienteBtn.disabled = currentPage === totalPages;
+            } else {
+                mostrarError("Error al cargar los pedidos: " + data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("Error al cargar los pedidos:", error);
+            mostrarError("Hubo un error al cargar los pedidos.");
+        });
+}
+
+
+
+// Función para ir a una página específica
+function elegirPagina() {
+    const pageInput = document.getElementById("page-input");
+    const targetPage = parseInt(pageInput.value, 10);
+
+    fetch("sw_cocina.php?action=getPedidos")
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                const itemsPerPage = 10;
+                const totalPages = Math.ceil(data.pedidos.length / itemsPerPage);
+
+                // Si la página ingresada es válida, recargar la tabla
+                if (targetPage >= 1 && targetPage <= totalPages) {
+                    const paginatedData = paginarRegistros(data.pedidos, targetPage, itemsPerPage);
+                    rellenarTabla(paginatedData, targetPage, totalPages);
+
+                    // Actualizar la información de la página
+                    const pageInfo = document.getElementById("page-info");
+                    pageInfo.textContent = `Página ${targetPage} de ${totalPages}`;
+                    pageInput.value = targetPage;
+
+                    // Deshabilitar botones de navegación según la página actual
+                    const paginaPreviaBtn = document.getElementById("prev-page-btn");
+                    const paginaSiguienteBtn = document.getElementById("next-page-btn");
+
+                    paginaPreviaBtn.disabled = targetPage === 1;
+                    paginaSiguienteBtn.disabled = targetPage === totalPages;
+                } else {
+                    mostrarError("Número de página inválido.");
+                }
+            } else {
+                mostrarError("Error al cargar los pedidos: " + data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("Error al cargar los pedidos:", error);
+            mostrarError("Hubo un error al cargar los pedidos.");
+        });
 }
 
 // Función para enviar el ID del pedido al backend
