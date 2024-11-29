@@ -27,6 +27,23 @@
     <main>
         <h1>Histórico de Pedidos</h1>
 
+        <div id="error-message" class="error-container"></div>
+
+        <div class="filter-container">
+            <label for="filter-column">Filtrar por:</label>
+            <select id="filter-column">
+                <option value="bocadillo">Bocadillo</option>
+                <option value="tipo">Tipo</option>
+                <option value="precio_pedido">Precio</option>
+                <option value="fecha">Fecha Pedido</option>
+                <option value="fecha_recogida">Fecha Recogida</option>
+            </select>
+
+            <input type="text" id="filter-value" placeholder="Introduce un valor para filtrar">
+            <button id="filter-button">Filtrar</button>
+            <button id="reset-button">Restablecer</button>
+        </div>
+
         <div id="total-container">
             <strong>Total gastado: </strong><span id="total-gastado">0.00€</span>
         </div>

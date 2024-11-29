@@ -27,10 +27,25 @@
     <main>
         <h1>Pedidos Pendientes</h1>
 
+        <div>
+            <select id="filter-column">
+                <option value="alumno">Alumno</option>
+                <option value="bocadillo">Bocadillo</option>
+                <option value="fecha">Fecha</option>
+            </select>
+            <input type="text" id="filter-value" placeholder="Introduce el valor a filtrar">
+            <button id="filter-button">Filtrar</button>
+            <button id="reset-button">Reiniciar</button>
+        </div>
+        <div id="error-message" class="error-message"></div>
+
+
         <!-- Resumen de bocadillos -->
 	    <div id="bocadillos-resumen" class="bocadillos-resumen">
 	        <!-- Resúmenes dinámicos se insertarán aquí -->
 	    </div>
+
+
         
         <!-- Contenedor de la tabla -->
         <div class="table-container">

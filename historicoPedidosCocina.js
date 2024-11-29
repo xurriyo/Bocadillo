@@ -15,34 +15,45 @@ function logout() {
     window.location.href = "index.html";
 }
 
+
 document.addEventListener("DOMContentLoaded", function () {
     fetchHistorico();
 
-    // Asignar evento de clic a los encabezados para filtrar
-    const headers = document.querySelectorAll("#historico-table th");
-    headers.forEach((header) => {
-        header.addEventListener("click", function () {
-            const column = header.getAttribute("data-column");
-            if (column) {
-                filtrarPorColumna(column);
-            }
-        });
-    })
+    const filterButton = document.getElementById("filter-button");
+    const resetButton = document.getElementById("reset-button");
+
+    filterButton.addEventListener("click", function () {
+        const column = document.getElementById("filter-column").value;
+        const filterValue = document.getElementById("filter-value").value;
+
+        if (filterValue.trim() === "") {
+            mostrarError("Por favor, introduce un valor para filtrar.");
+            return;
+        }
+
+        filtrarPorColumna(column, filterValue);
+    });
+
+    resetButton.addEventListener("click", function () {
+        document.getElementById("filter-value").value = "";
+        fetchHistorico(); // Restablecer la tabla con los datos originales
+    });
 });
 
 function fetchHistorico() {
+    ocultarError(); // Oculta errores previos
     fetch("getHistoricoPedidosCocina.php") // Solicitar el histórico de pedidos
         .then((response) => response.json())
         .then((data) => {
             if (data.success) {
                 rellenarHistorico(data.pedidos); // Llenar la tabla
             } else {
-                alert("Error al cargar el histórico: " + data.message);
+                mostrarError("Error al cargar el histórico: " + data.message);
             }
         })
         .catch((error) => {
             console.error("Error al cargar el histórico:", error);
-            alert("Hubo un error al cargar el histórico.");
+            mostrarError("Hubo un error al cargar el histórico.");
         });
 }
 
@@ -94,38 +105,41 @@ function rellenarHistorico(pedidos) {
     });
 }
 
-
-function filtrarPorColumna(column) {
-    // Solicitar los datos actuales del servidor para aplicar filtros
+function filtrarPorColumna(column, filterValue) {
+    ocultarError();
     fetch("getHistoricoPedidosCocina.php")
         .then((response) => response.json())
         .then((data) => {
             if (data.success) {
-                // Pedir al usuario el valor por el que filtrar
-                const filterValue = prompt(`Introduce un valor para filtrar por ${column}:`);
-                if (!filterValue) {
-                    rellenarHistorico(data.pedidos); // Mostrar todos los pedidos si no hay filtro
-                    return;
-                }
-
-                // Filtrar los pedidos devueltos
+                // Filtrar los pedidos según el valor ingresado
                 const pedidosFiltrados = data.pedidos.filter((pedido) => {
                     const value = pedido[column]?.toString().toLowerCase(); // Convertir a string y minúsculas
                     return value && value.includes(filterValue.toLowerCase());
                 });
 
-                // Actualizar la tabla con los pedidos filtrados
                 rellenarHistorico(pedidosFiltrados);
 
                 if (pedidosFiltrados.length === 0) {
-                    alert(`No se encontraron pedidos que coincidan con "${filterValue}".`);
+                    mostrarError(`No se encontraron pedidos que coincidan con "${filterValue}".`);
                 }
             } else {
-                alert("Error al cargar los pedidos: " + data.message);
+                mostrarError("Error al cargar los pedidos: " + data.message);
             }
         })
         .catch((error) => {
             console.error("Error al cargar los pedidos:", error);
-            alert("Hubo un error al filtrar los pedidos.");
+            mostrarError("Hubo un error al filtrar los pedidos.");
         });
+}
+
+function mostrarError(mensaje) {
+    const errorContainer = document.getElementById("error-message");
+    errorContainer.textContent = mensaje; // Actualiza el texto del error
+    errorContainer.classList.add("show"); // Muestra el contenedor
+}
+
+function ocultarError() {
+    const errorContainer = document.getElementById("error-message");
+    errorContainer.textContent = ""; // Limpia el mensaje
+    errorContainer.classList.remove("show"); // Oculta el contenedor
 }

@@ -19,7 +19,7 @@ try {
     // Obtener la hora actual
     $horaActual = new DateTime('now', new DateTimeZone('Europe/Madrid'));
     $horaInicio = new DateTime('09:00', new DateTimeZone('Europe/Madrid'));
-    $horaFin = new DateTime('20:00', new DateTimeZone('Europe/Madrid'));
+    $horaFin = new DateTime('10:00', new DateTimeZone('Europe/Madrid'));
 
     if ($horaActual < $horaInicio || $horaActual > $horaFin) {
         echo json_encode([

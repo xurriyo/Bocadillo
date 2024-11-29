@@ -25,9 +25,33 @@ function logout() {
 
 document.addEventListener("DOMContentLoaded", function () {
     fetchPedidos();
+
+    const filterButton = document.getElementById("filter-button");
+    const resetButton = document.getElementById("reset-button");
+
+    filterButton.addEventListener("click", function (event) {
+        event.preventDefault();
+        const column = document.getElementById("filter-column").value; // Verifica el valor
+        const filterValue = document.getElementById("filter-value").value.trim(); // Limpia espacios
+
+        if (!column || filterValue === "") {
+            mostrarError("Por favor, selecciona una columna válida e introduce un valor para filtrar.");
+            return;
+        }
+
+        filtrarPorColumna(column, filterValue);
+    });
+
+
+    resetButton.addEventListener("click", function (event) {
+        event.preventDefault(); // Evita que el formulario se envíe
+        document.getElementById("filter-value").value = "";
+        fetchPedidos(); // Restablecer la tabla con los datos originales
+    });
 });
 
 function fetchPedidos() {
+    ocultarError();
     fetch("getPedidos.php")
         .then((response) => response.json())
         .then((data) => {
@@ -38,12 +62,12 @@ function fetchPedidos() {
                 // Llenar la tabla de pedidos
                 rellenarTabla(data.pedidos);
             } else {
-                alert("Error al cargar pedidos: " + data.message);
+                mostrarError("Error al cargar pedidos: " + data.message);
             }
         })
         .catch((error) => {
             console.error("Error al cargar pedidos:", error);
-            alert("Hubo un error al cargar los pedidos.");
+            mostrarError("Hubo un error al cargar los pedidos.");
         });
 }
 
@@ -129,6 +153,7 @@ function rellenarTabla(pedidos) {
 
 // Función para enviar el ID del pedido al backend
 function marcarFechaRecogida(alumno, fecha) {
+    ocultarError();
     console.log("Datos enviados al backend:", { alumno, fecha });
 
     fetch("updateFechaRecogida.php", {
@@ -140,15 +165,53 @@ function marcarFechaRecogida(alumno, fecha) {
     })
         .then((response) => response.json())
         .then((data) => {
-            if (data.success) {
-                alert("Fecha de recogida actualizada correctamente.");
+            if (data.success) {;
                 fetchPedidos(); // Recargar los pedidos para reflejar cambios
             } else {
-                alert("Error al actualizar fecha de recogida: " + data.message);
+                mostrarError("Error al actualizar fecha de recogida: " + data.message);
             }
         })
         .catch((error) => {
             console.error("Error al actualizar fecha de recogida:", error);
-            alert("Hubo un error al actualizar la fecha de recogida.");
+            mostrarError("Hubo un error al actualizar la fecha de recogida.");
         });
+}
+
+function filtrarPorColumna(column, filterValue) {
+    ocultarError();
+    fetch("getPedidos.php")
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                // Filtrar los pedidos según el valor ingresado
+                const pedidosFiltrados = data.pedidos.filter((pedido) => {
+                    const value = pedido[column]?.toString().toLowerCase(); // Convertir a string y minúsculas
+                    return value && value.includes(filterValue.toLowerCase());
+                });
+
+                rellenarTabla(pedidosFiltrados);
+
+                if (pedidosFiltrados.length === 0) {
+                    mostrarError(`No se encontraron pedidos que coincidan con "${filterValue}".`);
+                }
+            } else {
+                mostrarError("Error al cargar los pedidos: " + data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("Error al cargar los pedidos:", error);
+            mostrarError("Hubo un error al filtrar los pedidos.");
+        });
+}
+
+function mostrarError(mensaje) {
+    const errorContainer = document.getElementById("error-message");
+    errorContainer.textContent = mensaje; // Actualiza el texto del error
+    errorContainer.classList.add("show"); // Muestra el contenedor
+}
+
+function ocultarError() {
+    const errorContainer = document.getElementById("error-message");
+    errorContainer.textContent = ""; // Limpia el mensaje
+    errorContainer.classList.remove("show"); // Oculta el contenedor
 }
