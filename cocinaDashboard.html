@@ -27,15 +27,16 @@
     <main>
         <h1>Pedidos Pendientes</h1>
 
-        <div>
+        <div class="filter-container">
+            <label for="filter-column">Filtrar por:</label>
             <select id="filter-column">
                 <option value="alumno">Alumno</option>
                 <option value="bocadillo">Bocadillo</option>
-                <option value="fecha">Fecha</option>
             </select>
-            <input type="text" id="filter-value" placeholder="Introduce el valor a filtrar">
+
+            <input type="text" id="filter-value" placeholder="Introduce un valor para filtrar">
             <button id="filter-button">Filtrar</button>
-            <button id="reset-button">Reiniciar</button>
+            <button id="reset-button">Restablecer</button>
         </div>
         <div id="error-message" class="error-message"></div>
 

@@ -32,7 +32,7 @@ function mostrarSaldo() {
         return;
     }
 
-    fetch("getSaldoAlumno.php", {
+    fetch("sw_alumno.php?action=getSaldoAlumno", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -66,7 +66,7 @@ function fetchBocadillos() {
 
     console.log("Enviando solicitud con nombreAlumno:", nombreAlumno);
 
-    fetch("getBocadillosAlumno.php", {
+    fetch("sw_alumno.php?action=getBocadillosAlumno", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -132,7 +132,7 @@ function seleccionarBocadillo(nombreBocadillo) {
         return;
     }
 
-    fetch("hacerPedido.php", {
+    fetch("sw_alumno.php?action=hacerPedido", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

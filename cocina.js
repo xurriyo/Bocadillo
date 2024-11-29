@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function fetchPedidos() {
     ocultarError();
-    fetch("getPedidos.php")
+    fetch("sw_cocina.php?action=getPedidos")
         .then((response) => response.json())
         .then((data) => {
             if (data.success) {
@@ -156,7 +156,7 @@ function marcarFechaRecogida(alumno, fecha) {
     ocultarError();
     console.log("Datos enviados al backend:", { alumno, fecha });
 
-    fetch("updateFechaRecogida.php", {
+    fetch("sw_cocina.php?action=updateFechaRecogida", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -179,7 +179,7 @@ function marcarFechaRecogida(alumno, fecha) {
 
 function filtrarPorColumna(column, filterValue) {
     ocultarError();
-    fetch("getPedidos.php")
+    fetch("sw_cocina.php?action=getPedidos")
         .then((response) => response.json())
         .then((data) => {
             if (data.success) {

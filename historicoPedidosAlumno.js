@@ -73,7 +73,7 @@ function fetchHistorico() {
         return;
     }
 
-    fetch("getHistoricoPedidosAlumno.php", {
+    fetch("sw_alumno.php?action=getHistoricoPedidosAlumno", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -142,32 +142,6 @@ function rellenarHistorico(pedidos) {
 }
 
 
-/*function filtrarPorColumna(column, filterValue) {
-    ocultarError();
-    fetch("getHistoricoPedidosCocina.php")
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.success) {
-                // Filtrar los pedidos según el valor ingresado
-                const pedidosFiltrados = data.pedidos.filter((pedido) => {
-                    const value = pedido[column]?.toString().toLowerCase(); // Convertir a string y minúsculas
-                    return value && value.includes(filterValue.toLowerCase());
-                });
-
-                rellenarHistorico(pedidosFiltrados);
-
-                if (pedidosFiltrados.length === 0) {
-                    mostrarError(`No se encontraron pedidos que coincidan con "${filterValue}".`);
-                }
-            } else {
-                mostrarError("Error al cargar los pedidos: " + data.message);
-            }
-        })
-        .catch((error) => {
-            console.error("Error al cargar los pedidos:", error);
-            mostrarError("Hubo un error al filtrar los pedidos.");
-        });
-}*/
 
 function filtrarPorColumna(column, filterValue) {
     ocultarError();
@@ -181,7 +155,7 @@ function filtrarPorColumna(column, filterValue) {
     }
 
     // Enviar solicitud al servidor con el filtro y el alumno
-    fetch("getHistoricoPedidosAlumno.php", {
+    fetch("sw_alumno.php?action=getHistoricoPedidosAlumno", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

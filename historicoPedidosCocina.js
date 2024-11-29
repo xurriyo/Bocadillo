@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function fetchHistorico() {
     ocultarError(); // Oculta errores previos
-    fetch("getHistoricoPedidosCocina.php") // Solicitar el histórico de pedidos
+    fetch("sw_cocina.php?action=getHistoricoPedidosCocina") // Solicitar el histórico de pedidos
         .then((response) => response.json())
         .then((data) => {
             if (data.success) {
@@ -107,7 +107,7 @@ function rellenarHistorico(pedidos) {
 
 function filtrarPorColumna(column, filterValue) {
     ocultarError();
-    fetch("getHistoricoPedidosCocina.php")
+    fetch("sw_cocina.php?action=getHistoricoPedidosCocina")
         .then((response) => response.json())
         .then((data) => {
             if (data.success) {
